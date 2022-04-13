@@ -14,12 +14,13 @@ class ResNetHighRes(SLICViT):
         assert 'model' in args
         super().__init__(**args)
 
-    def get_heatmap(self, im, text):
+    def get_heatmap(self, im, text, resize=True):
         with torch.no_grad():
             # im is uint8 numpy
             h, w = im.shape[:2]
             im = Image.fromarray(im).convert('RGB')
-            im = im.resize((224, 224))
+            if resize:
+                im = im.resize((224, 224))
             im = self.model.preprocess(im).unsqueeze(0).cuda()
 
             image_features = self.model(im, masks=None)  # 1xCxHxW
