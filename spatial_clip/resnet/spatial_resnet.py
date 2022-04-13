@@ -23,7 +23,6 @@ class CLIPSpatialResNet(nn.Module):
     def forward(self, im, masks=None):
         with torch.no_grad():
             im = im.type(self.model.dtype)
-            assert im.size(-1) == 224, im.size(-2) == 224
             # pad image to remove boundary effect
             pad = 64  # heuristic pad size
             pad = (pad, pad, pad, pad)
@@ -32,12 +31,13 @@ class CLIPSpatialResNet(nn.Module):
             features = self.model.encode_image(padded_im)
             # crop out center to remove pad
             if self.high_res:
-                target_size = 224
+                target_size_h, target_size_w = im.size(-2), im.size(-1)
             else:
-                target_size = 7
+                target_size_h, target_size_w = im.size(-2)//32, im.size(-1)//32
             # compute new pad size
-            pad = (features.size(-1) - target_size) // 2
-            features = features[:, :, pad:pad+target_size, pad:pad+target_size]
+            pad_h = (features.size(-2) - target_size_h) // 2
+            pad_w = (features.size(-1) - target_size_w) // 2
+            features = features[:, :, pad_h:pad_h+target_size_h, pad_w:pad_w+target_size_w]
             # interpolate back to 224x224, use nearest to reproduce denseclip
             features = F.upsample(features, size=(
                 im.size(-2), im.size(-1)), mode='bilinear', align_corners=None)  # 1xCxHxW
