@@ -49,7 +49,7 @@ class FlickrDataset(Dataset):
     def __init__(self, data_root=DATA_ROOT, data_type="flickr30k/train", phrase_types=[], sentences_dir=SENTENCES_DIR):
         self.data_root = data_root
         self.data_type = data_type
-        self.image_dir = osp.join(self.data_root, "flickr/flickr30k-images")
+        self.image_dir = osp.join(self.data_root, "flickr/flickr30k_images")
         # Precomputed edge box can be downloaded from
         # https://github.com/BryanPlummer/pl-clc
         self.edge_box_dir = osp.join(self.data_root, "flickr/edge_box")
@@ -66,7 +66,7 @@ class FlickrDataset(Dataset):
             self.data_root,
             "ds_csv_ann/{}/csv_dir/{}.csv".format(*data_type.split("/")),
         )
-        with open(self.anno_csv_path) as f:
+        with open(self.anno_csv_path, encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row["img_id"].endswith('.jpg'):
@@ -125,7 +125,7 @@ def get_sentence_data(fn):
                                     phrase belongs to
 
     """
-    with open(fn, 'r') as f:
+    with open(fn, 'r', encoding="utf-8") as f:
         sentences = f.read().split('\n')
 
     annotations = []
