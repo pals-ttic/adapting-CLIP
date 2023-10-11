@@ -18,6 +18,7 @@ class CLIPMaskedSpatialViT(nn.Module):
         else:
             self.target_size = 7
         if self.patch_size == 14:
+            # TODO: GPU
             self.model, self.preprocess = clip.load(
                 "ViT-L/{}".format(self.patch_size))
         else:
