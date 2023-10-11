@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from PIL import Image
 from skimage.segmentation import slic
-from utils.box_search import BruteForceBoxSearch, FractionAreaObjective
 import clip
 from spatial_clip import CLIPMaskedSpatialViT
 from spatial_clip import CLIPSpatialResNet
@@ -114,6 +113,7 @@ class VGPViT(nn.Module):
             setattr(self, key, args[key])
         # forward
         heatmaps = [self.get_heatmap(im, text) for text in phrases]
+        alpha = self.alpha
         # restore paramters
         for key in args:
             setattr(self, key, _args[key])

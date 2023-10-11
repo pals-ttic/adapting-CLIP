@@ -32,3 +32,14 @@ class GroundingEvaluator(object):
         iou = matched_bbox_iou(pred_bboxes, gt_bboxes)
         acc = torch.mean((iou > self.iou_thres).double())
         return acc
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+class GroudingEvaluatorVGPs(object):
+    def __init__(self, gt_dataset):
+        self.gt_dataset = gt_dataset
+
+    def __call__(self, pred_labels):
+        gt_labels = np.array(self.gt_dataset.isVGPs)
+        acc = np.sum(pred_labels==gt_labels)/gt_labels.shape[0]
+        return acc
